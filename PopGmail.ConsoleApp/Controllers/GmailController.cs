@@ -41,7 +41,9 @@ namespace PopGmail.ConsoleApp.Controllers
 
                 DateTime today = DateTime.Now;
                 DateTime scopeDate = today.AddDays(-1);
-                var query = SearchQuery.DeliveredAfter(scopeDate);
+
+                // Found message in scope date and not read.
+                var query = SearchQuery.DeliveredAfter(scopeDate).And(SearchQuery.NotSeen);
 
                 foreach (var uid in inbox.Search(query))
                 {
@@ -100,8 +102,8 @@ namespace PopGmail.ConsoleApp.Controllers
                         }
                     }
 
-                    // Delete Message from inbox.
-                    inbox.AddFlags(uid, MessageFlags.Flagged, true);
+                    // The message have been read.
+                    inbox.AddFlags(uid, MessageFlags.Seen, true);
                 }
 
                 client.Disconnect(true);
