@@ -68,14 +68,24 @@ namespace PopGmail.ConsoleApp.Controllers
                     foreach (MimeEntity attachment in message.Attachments)
                     {
                         var senderPath = Utils.InitPath(senderAddress);
+                        var attachmentFileName = string.Empty;
+                        var fileName = string.Empty;
 
-                        // Casting to TextPart type.
-                        // Correct an issue when download attachment from yahoo mail.
-                        var objTextPart = (TextPart)attachment;
+                        if (attachment.ContentType.Name == null)
+                        {
+                            // Casting to TextPart type.
+                            // Correct an issue when download attachment from yahoo mail.
+                            var objTextPart = (TextPart)attachment;
+                            fileName = objTextPart.FileName;
+                        }
+                        else
+                        {
+                            fileName = attachment.ContentType.Name;
+                        }
 
-                        Console.WriteLine(string.Format("ATTACHMENT{0}: {1}", Utils.Tab, objTextPart.FileName)); // <=== Get filename from the property.
+                        Console.WriteLine(string.Format("ATTACHMENT{0}: {1}", Utils.Tab, fileName)); // <=== Get filename from the property.
 
-                        var attachmentFileName = Path.Combine(senderPath, objTextPart.FileName);
+                        attachmentFileName = Path.Combine(senderPath, fileName);
                         var conAttachmentFileName = string.Format("WRITE{0}{0}: {1}", Utils.Tab, attachmentFileName);
 
                         Console.WriteLine(conAttachmentFileName);
