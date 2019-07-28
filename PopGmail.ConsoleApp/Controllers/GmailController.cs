@@ -67,20 +67,21 @@ namespace PopGmail.ConsoleApp.Controllers
 
                     foreach (MimeEntity attachment in message.Attachments)
                     {
+                        // Validate if no attachment then continue next object.
+                        if (!attachment.IsAttachment) continue;
+
                         var senderPath = Utils.InitPath(senderAddress);
                         var attachmentFileName = string.Empty;
                         var fileName = string.Empty;
 
-                        if (attachment.ContentType.Name == null)
+                        if (attachment.GetType() == typeof(MimePart))
                         {
-                            // Casting to TextPart type.
-                            // Correct an issue when download attachment from yahoo mail.
-                            var objTextPart = (TextPart)attachment;
-                            fileName = objTextPart.FileName;
+                            fileName = attachment.ContentDisposition.FileName;
                         }
                         else
                         {
-                            fileName = attachment.ContentType.Name;
+                            var objTextPart = (TextPart)attachment;
+                            fileName = objTextPart.FileName;
                         }
 
                         Console.WriteLine(string.Format("ATTACHMENT{0}: {1}", Utils.Tab, fileName)); // <=== Get filename from the property.
